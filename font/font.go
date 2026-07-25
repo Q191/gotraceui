@@ -6,12 +6,11 @@ import (
 	"sync"
 
 	"gioui.org/font"
-	"gioui.org/font/gofont"
 	"gioui.org/font/opentype"
 )
 
-//go:embed fallback.ttf
-var fallback []byte
+//go:embed AlibabaPuHuiTi-3-65-Medium.ttf
+var AlibabaPuHuiTi []byte
 
 var (
 	once       sync.Once
@@ -20,23 +19,19 @@ var (
 
 func Collection() []font.FontFace {
 	once.Do(func() {
-		c := gofont.Collection()
-
-		face, err := opentype.Parse(fallback)
+		face, err := opentype.Parse(AlibabaPuHuiTi)
 		if err != nil {
-			panic(fmt.Errorf("failed to parse fallback font: %s", err))
+			panic(fmt.Errorf("failed to parse AlibabaPuHuiTi font: %s", err))
 		}
 
 		fc := font.FontFace{
 			Font: font.Font{
-				Typeface: "Fallback",
+				Typeface: "阿里巴巴普惠体 3.0",
 			},
 			Face: face,
 		}
 
-		c = append(c, fc)
-		n := len(c)
-		collection = c[:n:n]
+		collection = []font.FontFace{fc}
 	})
 	return collection
 }
