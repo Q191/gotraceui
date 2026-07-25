@@ -72,23 +72,26 @@ type Palette struct {
 }
 
 var DefaultPalette = Palette{
-	Background:         oklch(99.44, 0.027, 106.89),
-	Foreground:         oklch(0, 0, 0),
-	ForegroundDisabled: oklch(55.21, 0, 0),
-	NavigationLink:     oklch(57.32, 0.235, 29.23),
-	OpenLink:           oklch(45.2, 0.31, 264.05),
-	Link:               oklch(45.2, 0.31, 264.05),
-	PrimarySelection:   oklcha(93.11, 0.101, 108.21, 0.6),
-	Border:             oklch(0, 0, 0),
+	// Windows 11 Canvas Background (#F3F3F3) & Primary Text (85% Black)
+	Background:         oklch(97.23, 0.002, 240),
+	Foreground:         oklch(14.5, 0, 0),
+	ForegroundDisabled: oklch(68.5, 0, 0),
+
+	// Win11 Accent Links & Selection
+	NavigationLink:   oklch(53.24, 0.229, 253), // Win11 Accent Blue
+	OpenLink:         oklch(45.2, 0.21, 255),
+	Link:             oklch(45.2, 0.21, 255),
+	PrimarySelection: oklch(85.34, 0.093, 236), // Semi-transparent Accent Hover
+	Border:           oklch(88.35, 0, 0),       // Control Stroke Default (#D1D1D1)
 
 	Popup: struct {
 		TitleForeground color.Oklch
 		TitleBackground color.Oklch
 		Background      color.Oklch
 	}{
-		TitleForeground: oklch(0, 0, 0),
-		TitleBackground: oklch(98.82, 0.017, 196.89),
-		Background:      oklch(98.29, 0.029, 145.35),
+		TitleForeground: oklch(14.5, 0, 0),
+		TitleBackground: oklch(97.23, 0.002, 240),
+		Background:      oklch(100, 0, 0), // Card White
 	},
 
 	Menu: struct {
@@ -97,10 +100,10 @@ var DefaultPalette = Palette{
 		Border     color.Oklch
 		Disabled   color.Oklch
 	}{
-		Background: oklch(98.82, 0.017, 196.89),
-		Selected:   oklch(89.92, 0.081, 195.81),
-		Border:     oklch(89.92, 0.081, 195.81),
-		Disabled:   oklch(73.8, 0, 0),
+		Background: oklch(98.81, 0, 0),       // Flyout Background (#FAFAFA)
+		Selected:   oklch(94.21, 0.015, 242), // List Hover State (#EFEFEF)
+		Border:     oklch(92.42, 0, 0),       // Card Stroke (#E5E5E5)
+		Disabled:   oklch(68.5, 0, 0),
 	},
 
 	Table: struct {
@@ -113,14 +116,14 @@ var DefaultPalette = Palette{
 		ExpandedBorder       color.Oklch
 		ExpandedBackground   color.Oklch
 	}{
-		EvenRowBackground:    oklch(99.44, 0.027, 106.89),
-		OddRowBackground:     oklch(99.44, 0.027, 106.89),
-		HoveredRowBackground: oklch(95.63, 0.024, 106.84),
-		HeaderBackground:     oklch(96.48, 0.026, 106.88),
-		Divider:              oklch(80.15, 0, 0),
-		DragHandle:           oklch(0, 0, 0),
-		ExpandedBorder:       oklch(80.15, 0, 0),
-		ExpandedBackground:   oklch(88.63, 0.053, 346),
+		EvenRowBackground:    oklch(100, 0, 0),         // Card Background (#FFFFFF)
+		OddRowBackground:     oklch(98.81, 0, 0),       // Alternative Tint (#FAFAFA)
+		HoveredRowBackground: oklch(94.21, 0.015, 242), // Subdued Item Hover (#EFEFEF)
+		HeaderBackground:     oklch(97.23, 0.002, 240), // Header Canvas Grid
+		Divider:              oklch(92.42, 0, 0),       // Fine Separator Border
+		DragHandle:           oklch(44.38, 0, 0),       // Muted Grip Gray
+		ExpandedBorder:       oklch(88.35, 0, 0),
+		ExpandedBackground:   oklch(96.1, 0.001, 240), // Nested Detail Area Base
 	},
 }
 
@@ -128,10 +131,10 @@ func NewTheme(fontCollection []font.FontFace) *Theme {
 	return &Theme{
 		Palette:       DefaultPalette,
 		Shaper:        text.NewShaper(text.WithCollection(fontCollection), text.NoSystemFonts()),
-		TextSize:      12,
-		TextSizeLarge: 14,
+		TextSize:      13,
+		TextSizeLarge: 15,
 
-		WindowPadding: 2,
+		WindowPadding: 4,
 		WindowBorder:  1,
 	}
 }
@@ -145,8 +148,8 @@ type ProgressBarStyle struct {
 
 func ProgressBar(th *Theme, progress float32) ProgressBarStyle {
 	return ProgressBarStyle{
-		ForegroundColor: oklch(56.7, 0.118, 143.83),
-		BackgroundColor: oklcha(0, 0, 0, 0),
+		ForegroundColor: oklch(53.24, 0.229, 253), // Windows 11 Base Accent Blue
+		BackgroundColor: oklch(88.35, 0, 0),       // Control Stroke Track Fill
 		BorderWidth:     1,
 		Progress:        progress,
 	}
@@ -156,14 +159,14 @@ func (p ProgressBarStyle) Layout(win *Window, gtx layout.Context) layout.Dimensi
 	defer rtrace.StartRegion(context.Background(), "theme.ProgressBarStyle.Layout").End()
 
 	return Border{
-		Color: p.ForegroundColor,
+		Color: p.BackgroundColor,
 		Width: p.BorderWidth,
 	}.Layout(win, gtx, func(win *Window, gtx layout.Context) layout.Dimensions {
-		// Draw background
+		// Draw background track
 		bg := clip.Rect{Max: gtx.Constraints.Min}.Op()
-		FillShape(win, gtx.Ops, p.BackgroundColor, bg)
+		FillShape(win, gtx.Ops, oklch(97.23, 0.002, 240), bg)
 
-		// Draw foreground
+		// Draw foreground indicator progress
 		fg := frect{Max: f32.Pt(float32(gtx.Constraints.Min.X)*p.Progress, float32(gtx.Constraints.Min.Y))}.Op(gtx.Ops)
 		FillShape(win, gtx.Ops, p.ForegroundColor, fg)
 
@@ -187,8 +190,8 @@ func CheckBox(th *Theme, checkbox widget.Boolean, label string) CheckBoxStyle {
 		Checkbox:        checkbox,
 		Label:           label,
 		TextColor:       th.Palette.Foreground,
-		ForegroundColor: th.Palette.Foreground,
-		BackgroundColor: oklcha(0, 0, 0, 0),
+		ForegroundColor: th.Palette.NavigationLink, // Standard Win11 Accent Blue for Tick
+		BackgroundColor: oklch(100, 0, 0),          // Unticked White Base
 		TextSize:        th.TextSize,
 	}
 }
@@ -204,28 +207,38 @@ func (c CheckBoxStyle) Layout(win *Window, gtx layout.Context) layout.Dimensions
 
 				ngtx := gtx
 				ngtx.Constraints = layout.Exact(image.Pt(sizePx, sizePx))
+
+				borderColor := oklch(88.35, 0, 0) // Default Win11 Stroke Border
+				if c.Checkbox.Get() {
+					borderColor = c.ForegroundColor // Changes to Blue if checked
+				}
+
 				return Border{
-					Color: c.ForegroundColor,
+					Color: borderColor,
 					Width: 1,
 				}.Layout(win, ngtx, func(win *Window, gtx layout.Context) layout.Dimensions {
-					FillShape(win, gtx.Ops, c.BackgroundColor, clip.Rect{Max: gtx.Constraints.Min}.Op())
 					if c.Checkbox.Get() {
+						// Checked state fills the box with accent color
+						FillShape(win, gtx.Ops, c.ForegroundColor, clip.Rect{Max: gtx.Constraints.Min}.Op())
 						padding := gtx.Constraints.Min.X / 4
 						if padding == 0 {
 							padding = gtx.Dp(1)
 						}
-						minx := padding
-						miny := minx
-						maxx := gtx.Constraints.Min.X - padding
-						maxy := maxx
-						FillShape(win, gtx.Ops, c.ForegroundColor, clip.Rect{Min: image.Pt(minx, miny), Max: image.Pt(maxx, maxy)}.Op())
+						// Inner white tick placeholder
+						FillShape(win, gtx.Ops, oklch(100, 0, 0), clip.Rect{
+							Min: image.Pt(padding, padding),
+							Max: image.Pt(gtx.Constraints.Min.X-padding, gtx.Constraints.Min.Y-padding),
+						}.Op())
+					} else {
+						// Unchecked white fill
+						FillShape(win, gtx.Ops, c.BackgroundColor, clip.Rect{Max: gtx.Constraints.Min}.Op())
 					}
 
 					return layout.Dimensions{Size: gtx.Constraints.Min}
 				})
 			},
 
-			layout.Spacer{Width: 3}.Layout,
+			layout.Spacer{Width: 8}.Layout, // Win11 Standard spacing between icon and text
 
 			func(gtx layout.Context) layout.Dimensions {
 				return widget.Label{MaxLines: 1}.Layout(gtx, win.Theme.Shaper, font.Font{}, c.TextSize, c.Label, win.ColorMaterial(gtx, c.TextColor))
@@ -248,8 +261,8 @@ func CheckBoxGroup(th *Theme, clickable *widget.Clickable, label string) CheckBo
 		Clickable:       clickable,
 		Label:           label,
 		TextColor:       th.Palette.Foreground,
-		ForegroundColor: th.Palette.Foreground,
-		BackgroundColor: oklcha(0, 0, 0, 0),
+		ForegroundColor: th.Palette.NavigationLink,
+		BackgroundColor: oklch(0, 0, 0),
 		TextSize:        th.TextSize,
 	}
 }
