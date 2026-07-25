@@ -6,55 +6,55 @@ import (
 )
 
 const (
-	colorsLightBase  = 58.51
-	colorsChromaBase = 0.122
-	colorLightStep1  = 15
-	colorLightStep2  = 10
+	colorsLightBase  = 94.5
+	colorsChromaBase = 0.04
+	colorLightStep1  = 2
+	colorLightStep2  = 3
 )
 
 var colors = [colorLast]color.Oklch{
-	colorStateUndetermined: oklch(colorsLightBase+colorLightStep1, colorsChromaBase, 70.54), // Manually chosen
+	colorStateUndetermined: oklch(colorsLightBase+colorLightStep1, colorsChromaBase, 253), // Manually chosen
 
-	colorStateActive:             oklch(colorsLightBase, colorsChromaBase, 143.74),  // Manually chosen
-	colorStateProcRunningNoG:     oklch(colorsLightBase, colorsChromaBase, 206.35),  // Manually chosen, same as colorStateReady
-	colorStateProcRunningBlocked: oklch(colorsLightBase-5, colorsChromaBase, 23.89), // Manually chosen, same as colorStateBlocked
-	colorStateProcRunningG:       oklch(colorsLightBase, colorsChromaBase, 143.74),  // Manually chosen, same as colorStateActive
-	colorStateStack:              oklchDelta(oklch(colorsLightBase, colorsChromaBase, 143.74), colorLightStep1, -0.01, 0),
-	colorStateCPUSample:          oklchDelta(oklchDelta(oklch(colorsLightBase, colorsChromaBase, 143.74), colorLightStep1, -0.01, 0), colorLightStep2, -0.01, 0),
+	colorStateActive:             oklch(colorsLightBase, colorsChromaBase, 253), // Manually chosen
+	colorStateProcRunningNoG:     oklch(colorsLightBase, colorsChromaBase, 200), // Manually chosen, same as colorStateReady
+	colorStateProcRunningBlocked: oklch(colorsLightBase-5, colorsChromaBase, 25), // Manually chosen, same as colorStateBlocked
+	colorStateProcRunningG:       oklch(colorsLightBase, colorsChromaBase, 253), // Manually chosen, same as colorStateActive
+	colorStateStack:              oklchDelta(oklch(colorsLightBase, colorsChromaBase, 253), colorLightStep1, -0.01, 0),
+	colorStateCPUSample:          oklchDelta(oklchDelta(oklch(colorsLightBase, colorsChromaBase, 253), colorLightStep1, -0.01, 0), colorLightStep2, -0.01, 0),
 
-	colorStateReady:            oklch(colorsLightBase, colorsChromaBase, 206.35), // Manually chosen
-	colorStateWaitingPreempted: oklch(colorsLightBase, colorsChromaBase, 206.35), // Manually chosen
+	colorStateReady:            oklch(colorsLightBase, colorsChromaBase, 200), // Manually chosen
+	colorStateWaitingPreempted: oklch(colorsLightBase, colorsChromaBase, 200), // Manually chosen
 	colorStateInactive:         oklch(colorsLightBase, 0, 0),
 
-	colorStateUserRegion: oklch(colorsLightBase+colorLightStep1+colorLightStep2, colorsChromaBase, 331.18), // Manually chosen
+	colorStateUserRegion: oklch(colorsLightBase+colorLightStep1+colorLightStep2, colorsChromaBase, 330), // Manually chosen
 
 	// Manually chosen. This is the rarest blocked state, so we darken it to have more range for the other states.
-	colorStateBlocked:              oklch(colorsLightBase-5, colorsChromaBase, 23.89),
-	colorStateBlockedSyscall:       oklch(colorsLightBase, colorsChromaBase, 23.89),
-	colorStateBlockedNet:           oklch(colorsLightBase+6, colorsChromaBase-0.01, 23.89),
-	colorStateBlockedHappensBefore: oklch(colorsLightBase+colorLightStep2, colorsChromaBase, 23.89),
+	colorStateBlocked:              oklch(colorsLightBase-5, colorsChromaBase, 25),
+	colorStateBlockedSyscall:       oklch(colorsLightBase, colorsChromaBase, 25),
+	colorStateBlockedNet:           oklch(colorsLightBase+6, colorsChromaBase-0.01, 25),
+	colorStateBlockedHappensBefore: oklch(colorsLightBase+colorLightStep2, colorsChromaBase, 25),
 	colorStateBlockedGC:            oklch(colorsLightBase, colorsChromaBase, 0), // a blend of colorStateGC and red
 
-	colorStateGC:  oklch(colorsLightBase, colorsChromaBase, 302.36),
-	colorStateSTW: oklch(colorsLightBase, colorsChromaBase+0.072, 23.89), // STW is the most severe form of blocking, hence the increased chroma
+	colorStateGC:  oklch(colorsLightBase, colorsChromaBase, 300),
+	colorStateSTW: oklch(colorsLightBase, colorsChromaBase+0.072, 25), // STW is the most severe form of blocking, hence the increased chroma
 
-	colorTimelineLabel:  oklch(62.68, 0, 0),
-	colorTimelineBorder: oklch(89.75, 0, 0),
+	colorTimelineLabel:  oklch(65, 0, 0),
+	colorTimelineBorder: oklch(90, 0, 0),
 
 	// 	// TODO(dh): find a nice color for this
 	// We don't use the l constant for thse colors because they're independent from the span colors
-	colorSpanHighlightedPrimaryOutline:   oklch(70.71, 0.322, 328.36),
-	colorSpanHighlightedSecondaryOutline: oklch(88.44, 0.27, 137.68),
+	colorSpanHighlightedPrimaryOutline:   oklch(70, 0.06, 328),
+	colorSpanHighlightedSecondaryOutline: oklch(88, 0.05, 137),
 
-	colorStateMerged: oklch(colorsLightBase+colorLightStep1, colorsChromaBase, 109.91), // Manually chosen, made brighter so it stands out in gradients
+	colorStateMerged: oklch(colorsLightBase+colorLightStep1, colorsChromaBase, 110),
 
 	colorStateStuck:   oklch(0, 0, 0),
 	colorStateDone:    oklch(0, 0, 0),
 	colorEvent:        oklch(colorsLightBase, colorsChromaBase, 0),
-	colorMergedEvents: oklch(colorsLightBase+colorLightStep1, colorsChromaBase, 284.44),
+	colorMergedEvents: oklch(colorsLightBase+colorLightStep1, colorsChromaBase, 283),
 
-	colorStateUnknown:              oklch(96.8, 0.211, 109.77),
-	colorStatePlaceholderStackSpan: oklch(92.59, 0.025, 106.88),
+	colorStateUnknown:              oklch(96, 0.03, 253),
+	colorStatePlaceholderStackSpan: oklch(92, 0.02, 253),
 }
 
 var mappedColors [len(colors)]color.LinearSRGB
