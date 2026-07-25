@@ -9,11 +9,13 @@ import (
 	"log"
 	"math"
 	"os"
+	"path"
 	"path/filepath"
 	"reflect"
 	"runtime"
 	rdebug "runtime/debug"
 	"runtime/pprof"
+	"runtime/trace"
 	rtrace "runtime/trace"
 	"slices"
 	"sort"
@@ -1366,7 +1368,22 @@ func isZeroValue(f *flag.Flag, value string) bool {
 	return value == z.Interface().(flag.Value).String()
 }
 
+// https://oklch.com/
 func main() {
+	// 1. 创建或打开一个用于保存 trace 数据的目标文件
+	f, err := os.Create(path.Base(os.Args[0]) + ".trace")
+	if err != nil {
+		log.Fatalf("无法创建 trace 文件: %v", err)
+	}
+	defer f.Close()
+
+	// 2. 启动运行时 trace
+	if err := trace.Start(f); err != nil {
+		log.Fatalf("无法启动 trace: %v", err)
+	}
+	// 确保程序结束时将内存中的 trace 数据完整刷新并写入文件
+	defer trace.Stop()
+
 	flag.Usage = usage("gotraceui", flag.CommandLine)
 	flag.BoolVar(&softDebug, "debug", debug, "Enable basic debug functionality")
 	flag.StringVar(&cpuprofile, "debug.cpuprofile", "", "write CPU profile to this file")
